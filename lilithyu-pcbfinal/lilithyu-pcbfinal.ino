@@ -1,7 +1,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_Sensor.h>
-#include "Keyboard.h"
+//#include "Keyboard.h"
 
 Adafruit_MPU6050 mpu;
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
@@ -20,7 +20,7 @@ void setup() {
   SerialUSB.begin(115200);
   // while (!SerialUSB);
   SerialUSB.println("MPU6050 OLED demo");
-  Keyboard.begin();
+//  Keyboard.begin();
 
   if (!mpu.begin()) {
     SerialUSB.println("Sensor init failed");
@@ -46,13 +46,16 @@ void setup() {
 }
 
 void loop() {
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+  
   // read the state of the pushbutton value:
   buttonState = digitalRead(buttonPin);
   //SerialUSB.println(buttonState);
   // SerialUSB.println(digitalRead(8));
 
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (Serial.available() > 0) {
+  if (a.acceleration.y < -1.5) {
     SerialUSB.println("serial available\n");
     // turn LED on:
     if (menuCount < 2) {
@@ -61,6 +64,17 @@ void loop() {
       menuCount = 0;
     }
   }
+
+    if (a.acceleration.y > 1.5) {
+    SerialUSB.println("serial available\n");
+    // turn LED on:
+    if (menuCount > 0) {
+      menuCount--;
+    } else {
+      menuCount = 2;
+    }
+  }
+  
 
   if (pageNumber == 0) {
     displayMenu();
@@ -110,6 +124,7 @@ void displayMenu() {
    display.println(">");
 
   display.display();
+  delay(1000);
 }
 
 void cursorMove() { // when button is pressed the selection ">" sign will move down
