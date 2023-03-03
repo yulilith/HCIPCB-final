@@ -3,6 +3,11 @@
 #include <Adafruit_Sensor.h>
 #include <RTCZero.h>
 
+// code adapted from: 
+// - Adafruit's MPU6050_oled example
+// - Adafruit's MPU6050 motion detection example
+// - https://docs.arduino.cc/tutorials/generic/simple-rtc
+
 Adafruit_MPU6050 mpu;
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &Wire);
 RTCZero rtc;
@@ -24,7 +29,7 @@ const byte seconds = 0;
 const byte minutes = 41;
 const byte hours = 5; 
 /* Change these values to set the current initial date */
-const byte day = 2;
+const byte day = 3;
 const byte month = 3;
 const byte year = 23;
 
@@ -54,7 +59,7 @@ void setup() {
   //setupt motion detection
   mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
   mpu.setMotionDetectionThreshold(2);
-  mpu.setMotionDetectionDuration(30);
+  mpu.setMotionDetectionDuration(25);
   mpu.setInterruptPinLatch(true);  // Keep it latched.  Will turn off when reinitialized.
   mpu.setInterruptPinPolarity(true);
   mpu.setMotionInterrupt(true);
@@ -80,7 +85,7 @@ void setup() {
   display.setTextColor(WHITE);
   display.setRotation(0);
 
-  //pinMode(buttonPin, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
   pinMode(ledPin, OUTPUT);
   pinMode(ledTop, OUTPUT);
   pinMode(ledBot, OUTPUT);
@@ -113,7 +118,9 @@ void loop() {
 
   /* page navigation */
   if (a.acceleration.x < -3.5) {
-    pageNumber = menuCount + 1;
+    if (pageNumber < 4) {
+       pageNumber = menuCount + 1;
+    }
    }
   if (a.acceleration.x > 3.5) {
     pageNumber = 0;

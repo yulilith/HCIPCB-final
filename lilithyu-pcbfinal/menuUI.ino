@@ -5,12 +5,14 @@ void displayMenu() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
 
-  display.setCursor(34, 6);
-  display.print("LILITH  YU");
-  for (int i = 32; i < 97; i += 3) {
+/* name */
+  display.setCursor(36, 6);
+  display.print("LILITH YU");
+  for (int i = 33; i < 93; i += 3) {
     display.drawFastHLine(i, 15, 1, SSD1306_WHITE);
   }
-  
+
+/* menu items */
   display.setTextSize(1);
   display.setCursor(10, 25);
   display.setTextColor(WHITE);
@@ -19,23 +21,30 @@ void displayMenu() {
   }
   display.println("CLOCK");
 
-  display.setCursor(10, 38);
+  display.setCursor(10, 37);
   display.setTextColor(WHITE);
     if (menuCount == 1) {
     display.setTextColor(BLACK, WHITE);
   }
   display.println("IMU INFO");
 
-  display.setCursor(10, 51);
+  display.setCursor(10, 49);
   display.setTextColor(WHITE);
   if (menuCount == 2) {
     display.setTextColor(BLACK, WHITE);
   }
   display.println("SECRET SURPRISE");
 
+/* item pointer */
   display.setTextColor(WHITE);
-  display.setCursor(0, menuCount * 13 + 25);
- display.println(">");
+  display.setCursor(2, menuCount * 12 + 25);
+  display.println(">");
+
+/* box outline */
+  display.drawFastHLine(0, 0, 124, SSD1306_WHITE);
+  display.drawFastHLine(0, 62, 124, SSD1306_WHITE);
+  display.drawFastVLine(0, 0, 62, SSD1306_WHITE);
+  display.drawFastVLine(124, 0, 62, SSD1306_WHITE);
 
   display.display();
   delay(1000);
@@ -44,7 +53,7 @@ void displayMenu() {
 void navigateMenu(sensors_event_t a, sensors_event_t g) {
     int accY = a.acceleration.y + 1.5;
       /* menu navigation */
-    if (accY < -2.5) {
+    if (accY > 2.5) {
       if (menuCount < 2) {
         menuCount++;
       }
@@ -53,8 +62,7 @@ void navigateMenu(sensors_event_t a, sensors_event_t g) {
 //    } else if (a.acceleration.y >= 1) {
 //      imuRst = true;
 
-  
-    if (accY > 2.5) {
+    if (accY < -2.5) {
         if (menuCount > 0) {
           menuCount--;
         }
