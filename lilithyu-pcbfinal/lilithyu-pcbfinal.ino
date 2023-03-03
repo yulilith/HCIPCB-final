@@ -5,7 +5,7 @@
 //#include "Keyboard.h"
 
 Adafruit_MPU6050 mpu;
-Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
+Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &Wire);
 RTCZero rtc;
 
 //led constants
@@ -21,9 +21,9 @@ const byte seconds = 0;
 const byte minutes = 0;
 const byte hours = 16; 
 /* Change these values to set the current initial date */
-const byte day = 15;
-const byte month = 6;
-const byte year = 15;
+const byte day = 2;
+const byte month = 3;
+const byte year = 23;
 
 //UI constants
 int menuCount = 0;
@@ -95,40 +95,37 @@ void loop() {
     pageNumber = 0;
    }
 
-  /* menu navigation */
-  if (a.acceleration.y < -1.5) {
-    SerialUSB.println("serial available\n");
-    // turn LED on:
-    if (menuCount < 2) {
-      menuCount++;
-    } else {
-      menuCount = 0;
-    }
-   }
 
-   if (a.acceleration.y > 1.5) {
-      SerialUSB.println("serial available\n");
-      // turn LED on:
-      if (menuCount > 0) {
-        menuCount--;
-      } else {
-        menuCount = 0;
-      }
-   }
 
   SerialUSB.println("menuCount: " + menuCount);
   SerialUSB.println("pageNumber: " + pageNumber);
 
   if (pageNumber == 0) {
     displayMenu();
-  } 
+    
+    /* menu navigation */
+    if (a.acceleration.y < -1.5) {
+      if (menuCount < 2) {
+        menuCount++;
+      }
+    }
+  
+    if (a.acceleration.y > 1.5) {
+        if (menuCount > 0) {
+          menuCount--;
+        }
+     }
+    } 
+  
   if (pageNumber == 1) {
     displayClock();
   } 
   if (pageNumber == 2) {
       display.clearDisplay();
       display.setCursor(0, 0);
+      display.setTextColor(WHITE);
       display.setTextSize(1);
+      
     
       SerialUSB.print("Accelerometer ");
       SerialUSB.print("X: ");
@@ -174,54 +171,4 @@ void loop() {
   if (pageNumber == 3) {
     displaySurprise();
   }
-}
-
-void displayMenu() {
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-//  display.invertDisplay(1);
-
-//  display.setCursor(10, 40);
-//  display.println("LILITH WATCH");
-  //---------------------------------
-  
-  display.setTextSize(1);
-  display.setCursor(10, 2);
-  display.println("CLOCK");
-//  display.setCursor(60, 20);
-//  display.println(valA);
-
-  display.setCursor(10, 12);
-  display.println("IMU INFO");
-//  display.setCursor(60, 30);
-//  display.println(valB);
-
-  display.setCursor(10, 22);
-  display.println("SECRET SURPRISE");
-//  display.setCursor(60, 40);
-//  display.println(valC);
-//
-//  display.setCursor(10, 30);
-//  display.println("Start:");
-//  display.setCursor(45, 50);
-//  if (encoder0Pos > 5 && menuCount == 4) {
-//    display.println("Run!");
-//    runState = true;
-//  } else {
-//    display.println("Idle");
-//    runState = false;
-//  }
-//  display.setCursor(2, (menuCount * 10) + 10);
-//  display.println(">");
-
-   display.setCursor(0, menuCount * 10 + 2);
-   display.println(">");
-
-  display.display();
-  delay(1000);
-}
-
-void cursorMove() { // when button is pressed the selection ">" sign will move down
-  int x = digitalRead(8); //read button
 }
