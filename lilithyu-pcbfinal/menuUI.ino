@@ -40,3 +40,18 @@ void displayMenu() {
   display.display();
   delay(1000);
 }
+
+void navigateMenu(sensors_event_t a, sensors_event_t g) {
+      /* menu navigation */
+    if (g.gyro.x < -0.5 && a.acceleration.y < -1) {
+      if (menuCount < 2) {
+        menuCount++;
+      }
+    }
+  
+    if (g.gyro.x > 0.5 && a.acceleration.y > 1) {
+        if (menuCount > 0) {
+          menuCount--;
+        }
+    }
+}

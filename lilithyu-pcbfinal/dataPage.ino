@@ -1,45 +1,21 @@
-//  sensors_event_t a, g, temp;
-//  mpu.getEvent(&a, &g, &temp);
+/*** DISPLAY IMU DATA ***/
 
-void displayData(Adafruit_MPU6050 mpu) {
-  sensors_event_t a, g, temp;
+void displayData(sensors_event_t a, sensors_event_t g, sensors_event_t temp) {
   mpu.getEvent(&a, &g, &temp);
   
   display.clearDisplay();
   display.setCursor(0, 0);
   display.setTextSize(1);
 
-  SerialUSB.print("Accelerometer ");
-  SerialUSB.print("X: ");
-  SerialUSB.print(a.acceleration.x, 1);
-  SerialUSB.print(" m/s^2, ");
-  SerialUSB.print("Y: ");
-  SerialUSB.print(a.acceleration.y, 1);
-  SerialUSB.print(" m/s^2, ");
-  SerialUSB.print("Z: ");
-  SerialUSB.print(a.acceleration.z, 1);
-  SerialUSB.println(" m/s^2");
-
-  display.println("Accelerometer - m/s^2");
+  display.println("Accelerometer - m/s^2\n");
   display.print(a.acceleration.x, 1);
   display.print(", ");
   display.print(a.acceleration.y, 1);
   display.print(", ");
   display.print(a.acceleration.z, 1);
-  display.println("");
-
-  SerialUSB.print("Gyroscope ");
-  SerialUSB.print("X: ");
-  SerialUSB.print(g.gyro.x, 1);
-  SerialUSB.print(" rps, ");
-  SerialUSB.print("Y: ");
-  SerialUSB.print(g.gyro.y, 1);
-  SerialUSB.print(" rps, ");
-  SerialUSB.print("Z: ");
-  SerialUSB.print(g.gyro.z, 1);
-  SerialUSB.println(" rps");
-
-  display.println("Gyroscope - rps");
+  display.println("\n");
+  
+  display.println("Gyroscope - rps\n");
   display.print(g.gyro.x, 1);
   display.print(", ");
   display.print(g.gyro.y, 1);

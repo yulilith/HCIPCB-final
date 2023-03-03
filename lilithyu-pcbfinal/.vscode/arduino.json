@@ -1,0 +1,5 @@
+{
+    "board": "SparkFun:samd:samd21_mini",
+    "port": "COM13",
+    "programmer": "edbg"
+}
