@@ -1,22 +1,27 @@
-void displaySurprise(long randNumber, sensors_event_t a, bool k1, bool k2, bool k3) {
+int myCounter = -1;
+bool rst = true;
+
+void displaySurprise(long randNumber, sensors_event_t a, sensors_event_t g) {
   display.clearDisplay();
   display.setTextColor(WHITE);
   display.setTextSize(1);
   display.setCursor(0, 0);
 
   if (randNumber == 0) {
-    knockKnock(k1, k2, k3, a);
+    knockKnock(a, g);
   } else if (randNumber == 1) {
-    dogPic();
-  } else if (randNumber == 2) {
     dogPic();
   }
 
   display.display();
 }
 
-void knockKnock(bool k1, bool k2, bool k3, sensors_event_t a) {
+void knockKnock(sensors_event_t a, sensors_event_t g) {
 /* constants */
+   if (surpriseRst) {
+   myCounter = -1;
+   surpriseRst = false;
+  }
   
 //  display.fillRect(10, 10, 10, 10);
   display.setTextColor(WHITE, BLACK);
@@ -24,22 +29,44 @@ void knockKnock(bool k1, bool k2, bool k3, sensors_event_t a) {
   display.print(">");
   display.setCursor(0, 0);
   display.println("Knock knock.");
-  k1 = true;
-  delay(1000);
-  if (k1) {
-    display.setCursor(55, 55);
+  
+  if (myCounter == 0) {
+    display.setCursor(56, 55);
     display.print("Who's there?");
   }
-  if (a.acceleration.y < -2) {
-    k2 = true;
+  
+  if (a.acceleration.x < -3 && rst) {
+    myCounter++;
+    rst = false;
   }
-  if (k2) {
+  
+  else if (a.acceleration.x >= 0) {
+    rst = true;
+  }
+  
+  if (a.acceleration.x > 2.9) {
+    myCounter = -1;
+  }
+  
+ SerialUSB.print("Count: ");
+ SerialUSB.println(myCounter);
+  if (myCounter >= 1) {
     display.setTextColor(WHITE, BLACK);
-    display.print("PCB who?");
-    display.setCursor(55, 10);
+    if (myCounter == 1) {
+      display.setCursor(80, 55);
+      display.print("PCB who?");
+    }
+    display.setCursor(56, 10);
     display.print("Who's there?");
     display.setCursor(0, 20);
     display.print("PCB.");
+  }
+
+  if (myCounter >= 2) {
+    display.setCursor(80, 30);
+    display.print("PCB who?");
+    display.setCursor(0, 40);
+    display.print("I'm sorry, I can't h-ear you over the sound of these traces!");
   }
 
   display.display();
@@ -116,7 +143,7 @@ void dogPic() {
 
 
   display.drawBitmap(0, 0, myBitmap, 128, 64, WHITE);
-  display.setCursor(45, 0);
-  display.print("cute elephant!");
+  display.setCursor(70, 0);
+  display.print("elephant!");
 
 }

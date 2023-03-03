@@ -42,16 +42,25 @@ void displayMenu() {
 }
 
 void navigateMenu(sensors_event_t a, sensors_event_t g) {
+    int accY = a.acceleration.y + 1.5;
       /* menu navigation */
-    if (g.gyro.x < -0.5 && a.acceleration.y < -1) {
+    if (accY < -2.5) {
       if (menuCount < 2) {
         menuCount++;
       }
     }
+//      imuRst = false;
+//    } else if (a.acceleration.y >= 1) {
+//      imuRst = true;
+
   
-    if (g.gyro.x > 0.5 && a.acceleration.y > 1) {
+    if (accY > 2.5) {
         if (menuCount > 0) {
           menuCount--;
         }
     }
+//        imuRst = false;
+//    } else if (a.acceleration.y <= 1) {
+//      imuRst = true;
+
 }

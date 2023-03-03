@@ -21,8 +21,8 @@ int buttonState = 0;
 // RTC constants
 /* Change these values to set the current initial time */
 const byte seconds = 0;
-const byte minutes = 0;
-const byte hours = 16; 
+const byte minutes = 41;
+const byte hours = 5; 
 /* Change these values to set the current initial date */
 const byte day = 2;
 const byte month = 3;
@@ -34,7 +34,7 @@ int pageNumber = 0; // page number
 
 // surprise page constants
 long randNumber; 
-bool k1, k2, k3;
+bool surpriseRst;
 
 /*** SETUP ***/
 
@@ -53,8 +53,8 @@ void setup() {
   
   //setupt motion detection
   mpu.setHighPassFilter(MPU6050_HIGHPASS_0_63_HZ);
-  mpu.setMotionDetectionThreshold(1);
-  mpu.setMotionDetectionDuration(20);
+  mpu.setMotionDetectionThreshold(2);
+  mpu.setMotionDetectionDuration(30);
   mpu.setInterruptPinLatch(true);  // Keep it latched.  Will turn off when reinitialized.
   mpu.setInterruptPinPolarity(true);
   mpu.setMotionInterrupt(true);
@@ -94,6 +94,15 @@ void loop() {
   /* get mpu data */
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
+
+  if (a.acceleration.x <= -6) {
+    display.ssd1306_command(SSD1306_DISPLAYOFF);
+    delay(5000);
+  } else if (a.acceleration.x >= -4) {
+    display.ssd1306_command(SSD1306_DISPLAYON);
+    display.display();
+  }
+  
   
   // buttonState = digitalRead(buttonPin);
 
@@ -103,10 +112,10 @@ void loop() {
   digitalWrite(ledBot, HIGH);
 
   /* page navigation */
-  if (g.gyro.y < -0.5) {
+  if (a.acceleration.x < -3.5) {
     pageNumber = menuCount + 1;
    }
-  if (g.gyro.y > 0.5) {
+  if (a.acceleration.x > 3.5) {
     pageNumber = 0;
    }
 
@@ -117,14 +126,13 @@ void loop() {
     displayMenu();
     navigateMenu(a, g);
     randNumber = random(2);
-    k1 = false;
-    k2 = false;
-    k3 = false;
+    surpriseRst = true;
   } 
   
   if (pageNumber == 1) {
     displayClock();
   } 
+  
   if (pageNumber == 2) {
       display.clearDisplay();
       display.setCursor(0, 0);
@@ -133,6 +141,6 @@ void loop() {
       displayData(a, g, temp);
   } 
   if (pageNumber == 3) {
-    displaySurprise(randNumber, a, k1, k2, k3);
+    displaySurprise(randNumber, a, g);
   }
 }
