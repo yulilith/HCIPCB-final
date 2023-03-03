@@ -2,33 +2,10 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_Sensor.h>
 #include <RTCZero.h>
-//#include "Keyboard.h"
 
 Adafruit_MPU6050 mpu;
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &Wire);
 RTCZero rtc;
-
-//led constants
-const int ledPin = 13;
-
-// push button constants
-const int buttonPin = 8;
-int buttonState = 0;
-
-//RTC constants
-/* Change these values to set the current initial time */
-const byte seconds = 0;
-const byte minutes = 0;
-const byte hours = 16; 
-/* Change these values to set the current initial date */
-const byte day = 2;
-const byte month = 3;
-const byte year = 23;
-
-//UI constants
-int menuCount = 0;
-int pageNumber = 0; // page number
-
 
 /*** SETUP ***/
 
@@ -36,10 +13,8 @@ void setup() {
   SerialUSB.begin(115200);
   // while (!SerialUSB);
   SerialUSB.println("MPU6050 OLED demo");
-  //  Keyboard.begin();
 
   /*initialize MPU */
-
   if (!mpu.begin()) {
     SerialUSB.println("Sensor init failed");
     while (1)
